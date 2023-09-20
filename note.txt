@@ -1,0 +1,1 @@
+couchbase-server-commumity version: 7.2.1-5934-1 amd64
