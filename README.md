@@ -1,0 +1,1 @@
+This is repo for demo couchbase cluster with vagrant(provider virtualbox)
