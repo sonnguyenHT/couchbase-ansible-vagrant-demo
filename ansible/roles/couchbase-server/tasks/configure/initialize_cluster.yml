@@ -1,10 +1,5 @@
 ---
 # Docs: https://docs.couchbase.com/server/current/cli/cbcli/couchbase-cli-cluster-init.html
-
-- name: debug
-  debug:
-    msg: "{{item.hostname}}"
-  loop: "{{couchbase_nodes}}"
 - name: Initialize the Cluster
   shell:
     cmd: |

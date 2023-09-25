@@ -87,7 +87,6 @@ All of the properties in the `couchbase_os` variable are optional, and will be a
 couchbase_os:
   firewalld: true
   disable_thp: true
-  common_tools: true
   kernel_tunings: true
   user_limits: true
 ```

@@ -53,15 +53,7 @@
     msg: "File has changed"
   when: file_hash.stdout != previous_file_hash
   register: hash_check
-
-# - name: debug
-#   debug:
-#     msg: "{{hash_check}}"
-
-# - name: Save the current hash for the future comparisons
-#   set_fact:
-#     previous_file_hash: "{{ file_hash.stdout }}"
-
+  
 - name: Update kernel settings
   command: sysctl -e -p /etc/sysctl.d/couchbase-server.conf
   when: couchbase_os.kernel_tunings | default(false) and not hash_check.changed == false

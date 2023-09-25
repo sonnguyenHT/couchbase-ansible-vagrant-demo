@@ -32,7 +32,7 @@
     - couchbase_user_groups
     - couchbase_indexes
 
-# preflight
+# Preflight
 - name: Preflight
   ansible.builtin.include_tasks : "{{ item }}"
   with_fileglob:
@@ -93,7 +93,7 @@
 
 - name: Tuning variables
   when: couchbase_os.kernel_tunings | default(false)
-  include_vars: ../defaults/tunings.yml
+  include_vars: defaults/tunings.yml
   tags:
     - couchbase_os
     - couchbase_disable_thp
@@ -112,11 +112,6 @@
   tags:
     - couchbase_os
     - couchbase_user_limits
-
-# # # # - include: os/firewalld.yml
-# # # #   when: couchbase_os.firewalld | default(false)
-# # # #   tags:
-# # # #     - couchbase_firewalld
 
 - name: Register a variable to set the master/configuration node
   set_fact:
@@ -160,34 +155,10 @@
     - couchbase_configure
     - couchbase_initialize_cluster
 
-# Configure audit only available on EE
-# - include: configure/audit.yml
-#   tags:
-#     - couchbase_configure
-#     - couchbase_audit
-
 - include: configure/notifications.yml
   tags:
     - couchbase_configure
     - couchbase_notifications
-
-# continue R&D about this
-# - include: configure/alerts.yml
-#   tags:
-#     - couchbase_configure
-#     - couchbase_alerts
-
-# this only have in EE
-# - include: configure/rebalance_settings.yml
-#   tags:
-#     - couchbase_configure
-#     - couchbase_rebalance_settings
-
-# this only have in EE
-# # - include: configure/security_settings.yml
-# #   tags:
-# #     - couchbase_configure
-# #     - couchbase_security_settings
 
 - include: configure/password_policy.yml
   tags:
@@ -204,11 +175,6 @@
     - couchbase_configure
     - couchbase_index_settings
 
-# - include: configure/ldap.yml
-#   tags:
-#     - couchbase_configure
-#     - couchbase_ldap
-
 - include: configure/add_nodes.yml
   tags:
     - couchbase_configure
@@ -219,41 +185,7 @@
     - couchbase_configure
     - couchbase_rebalance
 
-# this only have in EE
-# - include: configure/server_groups.yml
-#   tags:
-#     - couchbase_configure
-#     - couchbase_server_groups
-
 - include: configure/buckets.yml
   tags:
     - couchbase_configure
     - couchbase_buckets
-
-# - include: configure/sample_buckets.yml
-#   tags:
-#     - couchbase_configure
-#     - couchbase_sample_buckets
-
-# - include: configure/autofailover.yml
-#   tags:
-#     - couchbase_configure
-#     - couchbase_audit
-
-# Configure users only available on EE
-# - include: configure/users.yml
-#   tags:
-#     - couchbase_configure
-#     - couchbase_users
-#     - couchbase_user_groups
-
-# - include: configure/indexes.yml
-#   tags:
-#     - couchbase_configure
-#     - couchbase_indexes
-
-# Configure users only available on EE
-# - include: configure/xdcr.yml
-#   tags:
-#     - couchbase_configure
-#     - couchbase_xdcr

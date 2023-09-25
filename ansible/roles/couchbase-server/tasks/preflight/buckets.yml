@@ -3,7 +3,6 @@
   assert:
     that:
       - ( couchbase_buckets is defined ) and ( couchbase_buckets | type_debug == "list" )
-      - ( couchbase_sample_buckets is defined ) and ( couchbase_sample_buckets | type_debug == "list" )
   tags:
     - couchbase_configure
     - couchbase_buckets
@@ -113,15 +112,6 @@
     msg: "Boolean variables in couchbase_buckets shouldn't be passed as strings. Please remove unneeded apostrophes."
   when: ( item.flush is defined and item.flush is string )
   with_items: "{{ couchbase_buckets }}"
-  tags:
-    - couchbase_configure
-    - couchbase_buckets
-
-- name: Fail when the an invalid sample bucket is used
-  fail:
-    msg: "The couchbase_cluster.index_storage can only be 'default' or 'memopt'"
-  when: item not in ['beer-sample', 'travel-sample', 'gamesim-sample']
-  with_items: "{{ couchbase_sample_buckets }}"
   tags:
     - couchbase_configure
     - couchbase_buckets

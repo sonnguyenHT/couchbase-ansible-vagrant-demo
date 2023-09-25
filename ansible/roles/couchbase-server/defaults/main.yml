@@ -6,15 +6,13 @@ couchbase_server_download_url: ""
 
 # OS Tunings / Configuration
 couchbase_os:
-  firewalld: false
   disable_thp: true
-  common_tools: false
   kernel_tunings: true
   user_limits: true
 
 # Couchbase Cluster Settings
 couchbase_cluster:
-  name: Demo Cluster
+  name: Cluster
   rest_protocol: http
   port: 8091
   notifications: false
@@ -36,11 +34,6 @@ couchbase_memory_quotas:
 couchbase_security:
   admin_user: Administrator
   admin_password: "eHar#k)Zq7g^zUKI"
-  disable_http_ui: false
-  disable_www_authenticate: false
-  cluster_encryption_level: control
-  tls_min_version: tlsv1
-  tls_honor_cipher_order: true
 
 # The disk paths to use
 couchbase_paths:
@@ -48,20 +41,6 @@ couchbase_paths:
   index: /opt/couchbase/var/lib/couchbase/data
   analytics: /opt/couchbase/var/lib/couchbase/data
   eventing: /opt/couchbase/var/lib/couchbase/data
-
-# Rebalance Settings
-couchbase_rebalance_settings:
-  rebalance_retry: false
-  wait_for: 300
-  max_attempts: 1
-  moves_per_node: 4
-
-# Audit Settings
-couchbase_audit:
-  enabled: true
-  log_path: /opt/couchbase/var/lib/couchbase/logs
-  log_rotate_interval: 86400
-  log_rotate_size: 20971520
 
 # Password Policy
 couchbase_password_policy:
@@ -91,43 +70,7 @@ couchbase_index_settings:
   threads: 0
   log_level: info
 
-# Autofailover Settings
-couchbase_autofailover:
-  enabled: true
-  failover_timeout: 120
-  max_failovers: 1
-  failover_of_server_groups: false
-  failover_on_data_disk_issues: true
-  failover_data_disk_period: 120
-  can_abort_rebalance: true
-
-# Couchbase Email Alerts
-couchbase_email_alerts:
-  enabled: true
-  username: ""
-  password: ""
-  host: localhost
-  port: 25
-  encrypt: false
-  sender: couchbase@localhost
-  recipients: []
-  alerts:
-    - alert-auto-failover-node
-    - alert-auto-failover-max-reached
-    - alert-auto-failover-node-down
-    - alert-auto-failover-cluster-small
-    - alert-auto-failover-disable
-    - alert-ip-changed
-    - alert-disk-space
-    - alert-meta-overhead
-    - alert-meta-oom
-    - alert-write-failed
-    - alert-audit-msg-dropped
-    - alert-indexer-max-ram
-    - alert-timestamp-drift-exceeded
-    - alert-communication-issue
-
-# list of nodes
+# List of nodes
 couchbase_nodes: 
   - hostname: 192.168.56.3
     group: 1
@@ -141,12 +84,8 @@ couchbase_nodes:
     group: 1
     services: 
       - data,query,index
-  # - hostname: 192.168.56.6
-  #   group: 1
-  #   services: 
-  #     - data,query,index
 
-# list of buckets to create
+# List of buckets to create
 couchbase_buckets: 
   - name: test
     type: couchbase
@@ -170,47 +109,8 @@ couchbase_buckets:
     ram_size: 100
     replicas: 1
 
-# list of sample buckets to load
-couchbase_sample_buckets: 
-  - travel-sample
-
-# XDCR Remotes
-couchbase_xdcr_remotes: []
-
-# XDCR Replications
-couchbase_xdcr_replications: []
-
-couchbase_ldap:
-  hosts: []
-  port: 389
-  encryption: none
-  ldap_cacert:
-  server_cert_validation: false
-  request_timeout: 1000
-  bind_dn:
-  bind_password:
-  client_cert:
-  client_key:
-  authentication_enabled: false
-  user_dn_query:
-  authorization_enabled: false
-  group_query:
-  max_parallel_connections: 100
-  max_cache_size: 10000
-  cache_value_lifetime: 300000
-  enable_nested_groups: false
-  nested_groups_max_depth: 10
-
-# list of couchbase user groups
-couchbase_user_groups: []
-
-# list of couchbase users | This is don't need when running couchbase CE
-couchbase_users: []
-# list of couchbase indexes
+# List of couchbase indexes
 couchbase_indexes: 
-  # - bucket: test
-  #   definition: CREATE INDEX idx_test ON test (username)
-  #   replicas: 2
   - bucket: travel-sample
     definition: "CREATE INDEX idx_airport ON `travel-sample`.`inventory`.`airport` (self)"
     replicase: 2
@@ -221,5 +121,3 @@ couchbase_indexes:
 # this is hash for /etc/sysctl.d/couchbase-server.conf
 # command to get this 'sha256sum /etc/sysctl.d/couchbase-server.conf'
 previous_file_hash: 77a253902ce5acd741f96c9141996d6b27d11d4bd0bbeac104dd2e33af519b19 
-
-# couchbase_master: 192.168.56.3

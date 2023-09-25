@@ -1,5 +1,5 @@
 galaxy_info:
-  author: Aaron Benton
+  author: Son Nguyen
   description: Installs, initializes and configures Couchbase Server clusters
   company: Couchbase
   license: Apache

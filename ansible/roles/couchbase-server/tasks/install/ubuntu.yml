@@ -1,7 +1,5 @@
 ---
 - name: Install from Download URL if provided
-  # debug:
-  #   msg: "{{ couchbase_server_download_url }}"
   apt:
     deb: "{{ couchbase_server_download_url }}"
     state: present
@@ -36,10 +34,6 @@
   when: ((couchbase_server_download_url is defined) and (couchbase_server_download_url | length == 0)) and couchbase_server_version == 'latest'
   tags:
     - couchbase_install
-
-# - name: output couchbase versions
-#   debug:
-#     msg: "{{couchbase_latest_version.stdout}}"
 
 - name: Set the Couchbase Package Version
   set_fact:
