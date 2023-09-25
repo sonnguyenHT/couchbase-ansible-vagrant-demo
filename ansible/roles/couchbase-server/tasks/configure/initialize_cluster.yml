@@ -1,0 +1,42 @@
+---
+# Docs: https://docs.couchbase.com/server/current/cli/cbcli/couchbase-cli-cluster-init.html
+
+- name: debug
+  debug:
+    msg: "{{item.hostname}}"
+  loop: "{{couchbase_nodes}}"
+- name: Initialize the Cluster
+  shell:
+    cmd: |
+      if /opt/couchbase/bin/couchbase-cli setting-cluster \
+        --username {{ couchbase_security.admin_user | default('Administrator') }} \
+        --password '{{ couchbase_security.admin_password | default('password') }}' \
+        --cluster {{ inventory_hostname }} \
+        --cluster-name '{{ couchbase_cluster.name | default('My Cluster') }}' \
+        --cluster-ramsize {{ couchbase_memory_quotas.data | default(1024) }} \
+        --username {{ couchbase_security.admin_user | default('Administrator') }} \
+        --password '{{ couchbase_security.admin_password | default('password') }}' | \
+        grep -q 'ERROR: Cluster is not initialized'; then
+        /opt/couchbase/bin/couchbase-cli cluster-init \
+          --cluster {{ inventory_hostname }} \
+          --cluster-username {{ couchbase_security.admin_user | default('Administrator') }} \
+          --cluster-password '{{ couchbase_security.admin_password | default('password') }}' \
+          --cluster-port {{ couchbase_cluster.port | default(8091) }} \
+          --cluster-ramsize {{ couchbase_memory_quotas.data | default(1024) }} \
+          --cluster-index-ramsize {{ couchbase_memory_quotas.index | default(256) }} \
+          --cluster-name '{{ couchbase_cluster.name | default('My Cluster') }}' \
+          --services '{{ item.services is defined |
+            ternary(item.services, couchbase_cluster.default_services |
+            default(['data','index','query'])) |
+            join(',') }}'
+      else
+        echo "Already initialized"
+      fi
+  loop: "{{ couchbase_nodes }}"
+  register: initialize_cluster 
+  changed_when: "'Already initialized' not in initialize_cluster.stdout"
+  when: couchbase_master is defined and couchbase_master == inventory_hostname and couchbase_master == item.hostname
+
+
+# --cluster-fts-ramsize 256 --cluster-index-ramsize 256 --cluster-analytics-ramsize 1024 
+#           --cluster-analytics-ramsize {{ couchbase_memory_quotas.analytics | default(1024) }} \

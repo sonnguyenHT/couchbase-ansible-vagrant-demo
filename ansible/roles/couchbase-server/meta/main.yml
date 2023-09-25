@@ -1,0 +1,37 @@
+galaxy_info:
+  author: Aaron Benton
+  description: Installs, initializes and configures Couchbase Server clusters
+  company: Couchbase
+  license: Apache
+  role_name: couchbase_server
+  min_ansible_version: "1.9"
+  platforms:
+  - name: EL
+    versions:
+    - "7"
+    - "8"
+  - name: Amazon
+    versions:
+    - all
+  - name: Ubuntu
+    versions:
+    - bionic
+    - disco
+    - trusty
+  - name: Debian
+    versions:
+    - jessie
+    - wheezy
+  galaxy_tags:
+    - couchbase
+    - cluster
+    - n1ql
+    - fts
+    - kv
+    - analytics
+    - eventing
+    - cache
+    - database
+    - nosql
+collections:
+  - ansible.posix

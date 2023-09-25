@@ -1,0 +1,259 @@
+---
+- name: Gather variables for each operating system
+  ansible.builtin.include_vars: "{{ item }}"
+  with_first_found:
+    - "{{ ansible_distribution | lower }}-{{ ansible_distribution_version | lower }}.yml"
+    - "{{ ansible_distribution | lower }}-{{ ansible_distribution_major_version | lower }}.yml"
+    - "{{ ansible_os_family | lower }}-{{ ansible_distribution_major_version | lower }}.yml"
+    - "{{ ansible_distribution | lower }}.yml"
+    - "{{ ansible_os_family | lower }}.yml"
+  tags:
+    - couchbase_install
+    - couchbase_debug
+    - couchbase_configure
+    - couchbase_os
+    - couchbase_firewalld
+    - couchbase_rebalance
+    - couchbase_server_groups
+    - couchbase_buckets
+    - couchbase_sample_buckets
+    - couchbase_audit
+    - couchbase_autofailover
+    - couchbase_password_policy
+    - couchbase_query_settings
+    - couchbase_index_settings
+    - couchbase_security_settings
+    - couchbase_rebalance_settings
+    - couchbase_notifications
+    - couchbase_alerts
+    - couchbase_xdcr
+    - couchbase_ldap
+    - couchbase_users
+    - couchbase_user_groups
+    - couchbase_indexes
+
+# preflight
+- name: Preflight
+  ansible.builtin.include_tasks : "{{ item }}"
+  with_fileglob:
+    - preflight/*.yml
+  tags:
+    - couchbase_install
+    - couchbase_debug
+    - couchbase_configure
+    - couchbase_os
+    - couchbase_firewalld
+    - couchbase_rebalance
+    - couchbase_server_groups
+    - couchbase_buckets
+    - couchbase_sample_buckets
+    - couchbase_audit
+    - couchbase_autofailover
+    - couchbase_password_policy
+    - couchbase_query_settings
+    - couchbase_index_settings
+    - couchbase_security_settings
+    - couchbase_rebalance_settings
+    - couchbase_notifications
+    - couchbase_alerts
+    - couchbase_xdcr
+    - couchbase_ldap
+    - couchbase_users
+    - couchbase_user_groups
+    - couchbase_indexes
+
+# Install the OS specific installer in the install/ directory
+- name: Install the couchbase Server
+  include_tasks: "{{ item }}"
+  with_first_found:
+    - "install/{{ ansible_distribution | lower }}-{{ ansible_distribution_version | lower }}.yml"
+    - "install/{{ ansible_distribution | lower }}-{{ ansible_distribution_major_version | lower }}.yml"
+    - "install/{{ ansible_os_family | lower }}-{{ ansible_distribution_major_version | lower }}.yml"
+    - "install/{{ ansible_distribution | lower }}.yml"
+    - "install/{{ ansible_os_family | lower }}.yml"
+  tags:
+    - couchbase_install
+
+- name: Make sure Couchbase Server is started and enabled
+  service:
+    name: couchbase-server
+    state: started
+    enabled: true
+  tags:
+    - couchbase_install
+    - couchbase_configure
+
+# link: https://docs.couchbase.com/server/current/install/thp-disable.html the thp need to turn off for couchbase work correctly on linux
+- name: disable thp on server
+  include: os/disable_thp.yml
+  when: couchbase_os.disable_thp | default(false)
+  tags:
+    - couchbase_os
+    - couchbase_disable_thp
+
+- name: Tuning variables
+  when: couchbase_os.kernel_tunings | default(false)
+  include_vars: ../defaults/tunings.yml
+  tags:
+    - couchbase_os
+    - couchbase_disable_thp
+    - couchbase_tunings
+    - couchbase_user_limits
+
+- name: Tuning kernel
+  include: os/tunings.yml
+  when: couchbase_os.kernel_tunings | default(false)
+  tags:
+    - couchbase_os
+    - couchbase_kernel_tunings
+
+- include: os/user_limits.yml
+  when: couchbase_os.user_limits | default(false)
+  tags:
+    - couchbase_os
+    - couchbase_user_limits
+
+# # # # - include: os/firewalld.yml
+# # # #   when: couchbase_os.firewalld | default(false)
+# # # #   tags:
+# # # #     - couchbase_firewalld
+
+- name: Register a variable to set the master/configuration node
+  set_fact:
+    couchbase_master: "{{ inventory_hostname }}" # inventory_hostname is special_var in ansible show current host being inerated over in the play
+  when: couchbase_master is not defined and couchbase_nodes[0].hostname == inventory_hostname
+  tags:
+    - couchbase_configure
+    - couchbase_rebalance
+    - couchbase_server_groups
+    - couchbase_buckets
+    - couchbase_sample_buckets
+    - couchbase_audit
+    - couchbase_autofailover
+    - couchbase_password_policy
+    - couchbase_query_settings
+    - couchbase_index_settings
+    - couchbase_security_settings
+    - couchbase_rebalance_settings
+    - couchbase_notifications
+    - couchbase_alerts
+    - couchbase_xdcr
+    - couchbase_ldap
+    - couchbase_users
+    - couchbase_user_groups
+    - couchbase_indexes
+
+- name: Wait for nodes
+  include: configure/wait_for_nodes.yml
+  tags:
+    - couchbase_configure
+    - couchbase_rebalance
+
+- name: initialize nodes
+  include: configure/initialize_nodes.yml
+  tags:
+    - couchbase_configure
+    - couchbase_initialize_nodes
+
+- include: configure/initialize_cluster.yml
+  tags:
+    - couchbase_configure
+    - couchbase_initialize_cluster
+
+# Configure audit only available on EE
+# - include: configure/audit.yml
+#   tags:
+#     - couchbase_configure
+#     - couchbase_audit
+
+- include: configure/notifications.yml
+  tags:
+    - couchbase_configure
+    - couchbase_notifications
+
+# continue R&D about this
+# - include: configure/alerts.yml
+#   tags:
+#     - couchbase_configure
+#     - couchbase_alerts
+
+# this only have in EE
+# - include: configure/rebalance_settings.yml
+#   tags:
+#     - couchbase_configure
+#     - couchbase_rebalance_settings
+
+# this only have in EE
+# # - include: configure/security_settings.yml
+# #   tags:
+# #     - couchbase_configure
+# #     - couchbase_security_settings
+
+- include: configure/password_policy.yml
+  tags:
+    - couchbase_configure
+    - couchbase_password_policy
+
+- include: configure/query_settings.yml
+  tags:
+    - couchbase_configure
+    - couchbase_query_settings
+
+- include: configure/index_settings.yml
+  tags:
+    - couchbase_configure
+    - couchbase_index_settings
+
+# - include: configure/ldap.yml
+#   tags:
+#     - couchbase_configure
+#     - couchbase_ldap
+
+- include: configure/add_nodes.yml
+  tags:
+    - couchbase_configure
+    - couchbase_add_nodes
+
+- include: configure/rebalance.yml
+  tags:
+    - couchbase_configure
+    - couchbase_rebalance
+
+# this only have in EE
+# - include: configure/server_groups.yml
+#   tags:
+#     - couchbase_configure
+#     - couchbase_server_groups
+
+- include: configure/buckets.yml
+  tags:
+    - couchbase_configure
+    - couchbase_buckets
+
+# - include: configure/sample_buckets.yml
+#   tags:
+#     - couchbase_configure
+#     - couchbase_sample_buckets
+
+# - include: configure/autofailover.yml
+#   tags:
+#     - couchbase_configure
+#     - couchbase_audit
+
+# Configure users only available on EE
+# - include: configure/users.yml
+#   tags:
+#     - couchbase_configure
+#     - couchbase_users
+#     - couchbase_user_groups
+
+# - include: configure/indexes.yml
+#   tags:
+#     - couchbase_configure
+#     - couchbase_indexes
+
+# Configure users only available on EE
+# - include: configure/xdcr.yml
+#   tags:
+#     - couchbase_configure
+#     - couchbase_xdcr

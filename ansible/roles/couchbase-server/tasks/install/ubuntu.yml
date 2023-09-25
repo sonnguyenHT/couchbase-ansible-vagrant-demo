@@ -1,0 +1,65 @@
+---
+- name: Install from Download URL if provided
+  # debug:
+  #   msg: "{{ couchbase_server_download_url }}"
+  apt:
+    deb: "{{ couchbase_server_download_url }}"
+    state: present
+  become: true
+  when: (couchbase_server_download_url is defined) and (couchbase_server_download_url | length > 0)
+  tags:
+    - couchbase_install
+
+- name: Download and install the meta package
+  apt:
+    deb: https://packages.couchbase.com/releases/couchbase-release/couchbase-release-1.0-amd64.deb
+    state: present
+  when: (couchbase_server_download_url is defined) and (couchbase_server_download_url | length == 0)
+  tags:
+    - couchbase_install
+
+- name: Reload the local package database
+  apt:
+    update_cache: true
+  when: (couchbase_server_download_url is defined) and (couchbase_server_download_url | length == 0)
+  tags:
+    - couchbase_install
+
+- name: Get the Latest Couchbase Package Version
+  shell: |
+     apt list -a {{ couchbase_server_edition }} | \
+      grep '{{ couchbase_server_edition }}' | \
+      head -n 1 | \
+      sed -E 's/^couchbase-server[^ ]+\s+|\s+.+//g'
+  register: couchbase_latest_version
+  become: true
+  when: ((couchbase_server_download_url is defined) and (couchbase_server_download_url | length == 0)) and couchbase_server_version == 'latest'
+  tags:
+    - couchbase_install
+
+# - name: output couchbase versions
+#   debug:
+#     msg: "{{couchbase_latest_version.stdout}}"
+
+- name: Set the Couchbase Package Version
+  set_fact:
+    couchbase_server_version: "{{ couchbase_latest_version.stdout }}"
+  when: ((couchbase_server_download_url is defined) and (couchbase_server_download_url | length == 0)) and couchbase_server_version == 'latest'
+  tags:
+    - couchbase_install
+
+- name: Output the Build Version
+  debug:
+    msg: "Using {{ couchbase_server_edition }}: {{ couchbase_server_version }}"
+  when: (couchbase_server_download_url is defined) and (couchbase_server_download_url | length == 0)
+  tags:
+    - couchbase_install
+    - couchbase_debug
+
+- name: Install Couchbase Server package
+  apt:
+    name: "{{couchbase_server_edition}}={{ couchbase_server_version }}"
+    state: present
+  when: (couchbase_server_download_url is defined) and (couchbase_server_download_url | length == 0)
+  tags:
+    - couchbase_install

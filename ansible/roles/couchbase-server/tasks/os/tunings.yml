@@ -1,0 +1,70 @@
+---
+- name: Check to see if the kernel settings have already been deployed
+  stat:
+    path: /etc/sysctl.d/couchbase-server.conf
+  register: check_sysctl
+  when: couchbase_os.kernel_tunings | default(false)
+  tags:
+    - couchbase_os
+    - couchbase_kernel_tunings
+
+- name: Make sure the Kernel settings directory exists
+  become: true
+  become_user: root
+  file:
+    dest: /etc/sysctl.d
+    state: directory
+    owner: root
+    group: root
+    mode: 0644
+  when: couchbase_os.kernel_tunings | default(false) and not check_sysctl.stat.exists
+  tags:
+    - couchbase_os
+    - couchbase_kernel_tunings
+
+- name: Kernel settings config
+  become: true
+  become_user: root
+  template:
+    src: etc/sysctl.d/couchbase-server.conf.j2
+    dest: /etc/sysctl.d/couchbase-server.conf
+    owner: root
+    group: root
+    mode: 0644
+  when: couchbase_os.kernel_tunings | default(false) and not check_sysctl.stat.exists
+  tags:
+    - couchbase_os
+    - couchbase_kernel_tunings
+
+- name: Get couchbase-server.config hash 
+  ansible.builtin.stat:
+    path: /etc/sysctl.d/couchbase-server.conf
+  register: file_info
+
+- name: Calculate the hash of the file
+  become: true
+  become_user: root
+  ansible.builtin.shell: "sha256sum /etc/sysctl.d/couchbase-server.conf | awk '{print $1}'"
+  register: file_hash
+  changed_when: false # Prevent Ansible from considering this taks as changed
+
+- name: compare the current hash with the previous hash
+  fail:
+    msg: "File has changed"
+  when: file_hash.stdout != previous_file_hash
+  register: hash_check
+
+# - name: debug
+#   debug:
+#     msg: "{{hash_check}}"
+
+# - name: Save the current hash for the future comparisons
+#   set_fact:
+#     previous_file_hash: "{{ file_hash.stdout }}"
+
+- name: Update kernel settings
+  command: sysctl -e -p /etc/sysctl.d/couchbase-server.conf
+  when: couchbase_os.kernel_tunings | default(false) and not hash_check.changed == false
+  tags:
+    - couchbase_os
+    - couchbase_kernel_tunings
