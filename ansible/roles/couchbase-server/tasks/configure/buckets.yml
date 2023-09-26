@@ -6,14 +6,14 @@
       if /opt/couchbase/bin/couchbase-cli bucket-list \
         --cluster {{ hostvars[inventory_hostname].ansible_host }} \
         --username {{ couchbase_security.admin_user | default('Administrator') }} \
-        --password '{{ couchbase_security.admin_password | default('password') }}' | \
+        --password '{{ admin_password | default('password') }}' | \
         grep -q '{{ item.name }}'; then
           echo "The bucket already exists"
       else
         /opt/couchbase/bin/couchbase-cli bucket-create \
           --cluster {{ hostvars[inventory_hostname].ansible_host }} \
           --username {{ couchbase_security.admin_user | default('Administrator') }} \
-          --password '{{ couchbase_security.admin_password | default('password') }}' \
+          --password '{{ admin_password | default('password') }}' \
           --bucket {{ item.name | default('default') }} \
           --bucket-type {{ item.type | default('couchbase') }} \
           --bucket-ramsize {{ item.ram_size | default(100) }} \

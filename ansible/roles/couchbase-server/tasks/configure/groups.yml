@@ -6,7 +6,7 @@
       if /opt/couchbase/bin/couchbase-cli group-manage \
         --cluster {{ hostvars[inventory_hostname].ansible_host }} \
         --username {{ couchbase_security.admin_user | default('Administrator') }} \
-        --password '{{ couchbase_security.admin_password | default('password') }}' \
+        --password '{{ admin_password | default('password') }}' \
         --list | \
         grep -q '{{ item }}'; then
           echo "The group already exists"
@@ -14,7 +14,7 @@
         /opt/couchbase/bin/couchbase-cli group-manage \
           --cluster {{ hostvars[inventory_hostname].ansible_host }} \
           --username {{ couchbase_security.admin_user | default('Administrator') }} \
-          --password '{{ couchbase_security.admin_password | default('password') }}' \
+          --password '{{ admin_password | default('password') }}' \
           --group-name '{{ item }}' \
           --create
       fi
@@ -30,7 +30,7 @@
       /opt/couchbase/bin/couchbase-cli group-manage \
         --cluster {{ hostvars[inventory_hostname].ansible_host }} \
         --username {{ couchbase_security.admin_user | default('Administrator') }} \
-        --password '{{ couchbase_security.admin_password | default('password') }}' \
+        --password '{{ admin_password | default('password') }}' \
         --move-servers '{{ hostvars[inventory_hostname].ansible_host }}' \
         --from-group 'Group 1' \
         --to-group '{{ item.group }}'
@@ -46,13 +46,13 @@
       if /opt/couchbase/bin/couchbase-cli group-manage \
         --cluster {{ hostvars[inventory_hostname].ansible_host }} \
         --username {{ couchbase_security.admin_user | default('Administrator') }} \
-        --password '{{ couchbase_security.admin_password | default('password') }}' \
+        --password '{{ admin_password | default('password') }}' \
         --list | \
         grep -q 'Group 1'; then
         /opt/couchbase/bin/couchbase-cli group-manage \
           --cluster {{ hostvars[inventory_hostname].ansible_host }} \
           --username {{ couchbase_security.admin_user | default('Administrator') }} \
-          --password '{{ couchbase_security.admin_password | default('password') }}' \
+          --password '{{ admin_password | default('password') }}' \
           --group-name 'Group 1' \
           --delete
       fi

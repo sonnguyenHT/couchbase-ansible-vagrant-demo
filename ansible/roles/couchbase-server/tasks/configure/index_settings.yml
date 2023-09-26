@@ -6,7 +6,7 @@
       /opt/couchbase/bin/couchbase-cli setting-index \
         --cluster {{ hostvars[inventory_hostname].ansible_host }} \
         --username {{ couchbase_security.admin_user | default('Administrator') }} \
-        --password '{{ couchbase_security.admin_password | default('password') }}' \
+        --password '{{ admin_password | default('password') }}' \
         --index-max-rollback-points {{ couchbase_index_settings.max_rollback_points | default(2) | int }} \
         --index-stable-snapshot-interval {{ couchbase_index_settings.stable_snapshot_interval | default(5000) | int }} \
         --index-memory-snapshot-interval {{ couchbase_index_settings.memory_snapshot_interval | default(200) | int }} \

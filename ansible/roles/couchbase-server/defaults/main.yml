@@ -103,15 +103,6 @@
 #     replicas: 2
 #     priority: low 
 
-# # List of couchbase indexes
-# couchbase_indexes: 
-#   - bucket: travel-sample
-#     definition: "CREATE INDEX idx_airport ON `travel-sample`.`inventory`.`airport` (self)"
-#     replicase: 2
-#   - bucket: travel-sample
-#     definition: "CREATE INDEX idx_airline ON `travel-sample`.`inventory`.`airline` (self)"
-#     replicase: 2
-
 # # this is hash for /etc/sysctl.d/couchbase-server.conf
 # # command to get this 'sha256sum /etc/sysctl.d/couchbase-server.conf'
 # previous_file_hash: 77a253902ce5acd741f96c9141996d6b27d11d4bd0bbeac104dd2e33af519b19 

@@ -6,7 +6,7 @@
       /opt/couchbase/bin/couchbase-cli setting-query \
         --cluster {{ hostvars[inventory_hostname].ansible_host }} \
         --username {{ couchbase_security.admin_user | default('Administrator') }} \
-        --password '{{ couchbase_security.admin_password | default('password') }}' \
+        --password '{{ admin_password | default('password') }}' \
         --pipeline-batch {{ couchbase_query_settings.pipeline_batch | default(16) | int }} \
         --pipeline-cap {{ couchbase_query_settings.pipeline_cap | default(512) | int }} \
         --scan-cap {{ couchbase_query_settings.scan_cap | default(512) | int }} \

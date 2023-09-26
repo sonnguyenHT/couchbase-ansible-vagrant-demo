@@ -5,17 +5,17 @@
     cmd: |
       if /opt/couchbase/bin/couchbase-cli setting-cluster \
         --username {{ couchbase_security.admin_user | default('Administrator') }} \
-        --password '{{ couchbase_security.admin_password | default('password') }}' \
+        --password '{{ admin_password | default('password') }}' \
         --cluster {{ hostvars[inventory_hostname].ansible_host }} \
         --cluster-name '{{ couchbase_cluster.name | default('My Cluster') }}' \
         --cluster-ramsize {{ couchbase_memory_quotas.data | default(1024) }} \
         --username {{ couchbase_security.admin_user | default('Administrator') }} \
-        --password '{{ couchbase_security.admin_password | default('password') }}' | \
+        --password '{{ admin_password | default('password') }}' | \
         grep -q 'ERROR: Cluster is not initialized'; then
         /opt/couchbase/bin/couchbase-cli cluster-init \
           --cluster {{ hostvars[inventory_hostname].ansible_host }} \
           --cluster-username {{ couchbase_security.admin_user | default('Administrator') }} \
-          --cluster-password '{{ couchbase_security.admin_password | default('password') }}' \
+          --cluster-password '{{ admin_password | default('password') }}' \
           --cluster-port {{ couchbase_cluster.port | default(8091) }} \
           --cluster-ramsize {{ couchbase_memory_quotas.data | default(1024) }} \
           --cluster-index-ramsize {{ couchbase_memory_quotas.index | default(256) }} \

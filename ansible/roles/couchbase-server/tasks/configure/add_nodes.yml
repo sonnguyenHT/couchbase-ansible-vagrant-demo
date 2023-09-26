@@ -6,16 +6,16 @@
       if /opt/couchbase/bin/couchbase-cli host-list \
         --cluster {{ hostvars[inventory_hostname].ansible_host }} \
         --username {{ couchbase_security.admin_user | default('Administrator') }} \
-        --password '{{ couchbase_security.admin_password | default('password') }}' | \
+        --password '{{ admin_password | default('password') }}' | \
         grep -q '{{ item.ip }}'; then
           echo "The node already exists in the cluster"
       else
         /opt/couchbase/bin/couchbase-cli server-add \
           --cluster {{ inventory_hostname }} \
           --username {{ couchbase_security.admin_user | default('Administrator') }} \
-          --password '{{ couchbase_security.admin_password | default('password') }}' \
+          --password '{{ admin_password | default('password') }}' \
           --server-add-username {{ couchbase_security.admin_user | default('Administrator') }} \
-          --server-add-password '{{ couchbase_security.admin_password | default('password') }}' \
+          --server-add-password '{{ admin_password | default('password') }}' \
           --server-add {{ item.ip }} \
           --services '{{
             item.services is defined |

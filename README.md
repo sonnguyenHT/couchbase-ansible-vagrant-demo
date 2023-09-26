@@ -13,5 +13,5 @@ vagrant up
 # Start couchbase cluster
 ```
 cd ansible
-ansible-playbook main.yml -i inventory
+ansible-playbook main.yml -i inventory --vault-password-file .vault_pass
 ```

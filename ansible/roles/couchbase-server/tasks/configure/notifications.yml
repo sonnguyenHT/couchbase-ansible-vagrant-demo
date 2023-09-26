@@ -6,7 +6,7 @@
       /opt/couchbase/bin/couchbase-cli setting-notification \
         --cluster {{ hostvars[inventory_hostname].ansible_host }} \
         --username {{ couchbase_security.admin_user | default('Administrator') }} \
-        --password '{{ couchbase_security.admin_password | default('password') }}' \
+        --password '{{ admin_password | default('password') }}' \
         --enable-notifications {{ couchbase_cluster.notifications | default(true) | int }}
   when: couchbase_master is defined and couchbase_master == hostvars[inventory_hostname].ansible_host
   changed_when: false

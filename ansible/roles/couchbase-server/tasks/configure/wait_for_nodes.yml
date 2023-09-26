@@ -4,7 +4,7 @@
     url: "http://{{ hostvars[inventory_hostname].ansible_host }}:8091/pools"
     method: GET
     user: "{{ couchbase_security.admin_user }}"
-    password: "{{ couchbase_security.admin_password }}"
+    password: "{{ admin_password }}"
   register: _result
   until: _result.status == 200
   retries: 60
