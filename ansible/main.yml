@@ -1,14 +1,6 @@
 ---
 - name: Playbook
   hosts: couchbase-dev
-  # pre_tasks:
-  #   - name: install dependencies before stating
-  #     become: yes
-  #     register: aptinstall
-  #     apt:
-  #       name:
-  #         - net-tools
-  #       state: latest
   roles:
     - { role: couchbase-server }
   become: yes

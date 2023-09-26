@@ -61,15 +61,6 @@
     - couchbase_os
     - couchbase_disable_thp
 
-- name: Tuning variables
-  when: couchbase_os.kernel_tunings | default(false)
-  include_vars: defaults/tunings.yml
-  tags:
-    - couchbase_os
-    - couchbase_disable_thp
-    - couchbase_tunings
-    - couchbase_user_limits
-
 - name: Tuning kernel
   include: os/tunings.yml
   when: couchbase_os.kernel_tunings | default(false)
