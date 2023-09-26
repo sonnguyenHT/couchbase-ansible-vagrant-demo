@@ -4,7 +4,7 @@
   shell:
     cmd: |
       if /opt/couchbase/bin/couchbase-cli group-manage \
-        --cluster {{ inventory_hostname }} \
+        --cluster {{ hostvars[inventory_hostname].ansible_host }} \
         --username {{ couchbase_security.admin_user | default('Administrator') }} \
         --password '{{ couchbase_security.admin_password | default('password') }}' \
         --list | \
@@ -12,13 +12,13 @@
           echo "The group already exists"
       else
         /opt/couchbase/bin/couchbase-cli group-manage \
-          --cluster {{ inventory_hostname }} \
+          --cluster {{ hostvars[inventory_hostname].ansible_host }} \
           --username {{ couchbase_security.admin_user | default('Administrator') }} \
           --password '{{ couchbase_security.admin_password | default('password') }}' \
           --group-name '{{ item }}' \
           --create
       fi
-  when: couchbase_master is defined and couchbase_master == inventory_hostname
+  when: couchbase_master is defined and couchbase_master == hostvars[inventory_hostname].ansible_host
   loop: "{{ couchbase_nodes | selectattr('group', 'defined') | map(attribute='group') | list | unique }}"
   tags:
     - couchbase_configure
@@ -28,13 +28,13 @@
   shell:
     cmd: |
       /opt/couchbase/bin/couchbase-cli group-manage \
-        --cluster {{ inventory_hostname }} \
+        --cluster {{ hostvars[inventory_hostname].ansible_host }} \
         --username {{ couchbase_security.admin_user | default('Administrator') }} \
         --password '{{ couchbase_security.admin_password | default('password') }}' \
-        --move-servers '{{ item.hostname }}' \
+        --move-servers '{{ hostvars[inventory_hostname].ansible_host }}' \
         --from-group 'Group 1' \
         --to-group '{{ item.group }}'
-  when: couchbase_master is defined and couchbase_master == inventory_hostname
+  when: couchbase_master is defined and couchbase_master == hostvars[inventory_hostname].ansible_host
   loop: "{{ couchbase_nodes | selectattr('group', 'defined') | list }}"
   tags:
     - couchbase_configure
@@ -44,20 +44,20 @@
   shell:
     cmd: |
       if /opt/couchbase/bin/couchbase-cli group-manage \
-        --cluster {{ inventory_hostname }} \
+        --cluster {{ hostvars[inventory_hostname].ansible_host }} \
         --username {{ couchbase_security.admin_user | default('Administrator') }} \
         --password '{{ couchbase_security.admin_password | default('password') }}' \
         --list | \
         grep -q 'Group 1'; then
         /opt/couchbase/bin/couchbase-cli group-manage \
-          --cluster {{ inventory_hostname }} \
+          --cluster {{ hostvars[inventory_hostname].ansible_host }} \
           --username {{ couchbase_security.admin_user | default('Administrator') }} \
           --password '{{ couchbase_security.admin_password | default('password') }}' \
           --group-name 'Group 1' \
           --delete
       fi
   when: couchbase_master is defined and
-    couchbase_master == inventory_hostname and
+    couchbase_master == hostvars[inventory_hostname].ansible_host and
     (couchbase_nodes | selectattr('group', 'defined') | list | count > 0) and
     (couchbase_nodes | selectattr('group', 'defined') | selectattr('group', 'match', 'Group 1') | list | count == 0)
   tags:

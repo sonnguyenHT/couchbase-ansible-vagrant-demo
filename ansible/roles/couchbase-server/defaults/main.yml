@@ -1,123 +1,117 @@
 ---
-#couchbase_server_edition: "community"
-couchbase_server_edition: "couchbase-server-community"
-couchbase_server_version: "7.2.1-5934-1"
-couchbase_server_download_url: ""
+# #couchbase_server_edition: "community"
+# couchbase_server_edition: "couchbase-server-community"
+# couchbase_server_version: "7.2.1-5934-1"
+# couchbase_server_download_url: ""
 
-# OS Tunings / Configuration
-couchbase_os:
-  disable_thp: true
-  kernel_tunings: true
-  user_limits: true
+# # OS Tunings / Configuration
+# couchbase_os:
+#   disable_thp: true
+#   kernel_tunings: true
+#   user_limits: true
 
-# Couchbase Cluster Settings
-couchbase_cluster:
-  name: Cluster
-  rest_protocol: http
-  port: 8091
-  notifications: false
-  index_storage: default
-  default_services:
-    - data
-    - index
-    - query
+# # Couchbase Cluster Settings
+# couchbase_cluster:
+#   name: Cluster
+#   rest_protocol: http
+#   port: 8091
+#   notifications: false
+#   index_storage: default
+#   default_services:
+#     - data
+#     - index
+#     - query
 
-# Couchbase Server Memory Quotas
-couchbase_memory_quotas:
-  analytics: 1024 #1024
-  data: 400 #4098
-  eventing: 256
-  fts: 256 #512
-  index: 256 #512
+# # Couchbase Server Memory Quotas
+# couchbase_memory_quotas:
+#   analytics: 1024 #1024
+#   data: 400 #4098
+#   eventing: 256
+#   fts: 256 #512
+#   index: 256 #512
 
-# Security Settings
-couchbase_security:
-  admin_user: Administrator
-  admin_password: "eHar#k)Zq7g^zUKI"
+# # Security Settings
+# couchbase_security:
+#   admin_user: Administrator
+#   # admin_password: !vault |
+#   #                 $ANSIBLE_VAULT;1.1;AES256
+#   #                 65363338313466363635356531343337383438346235666236376634386336366633303038336331
+#   #                 6232633064303732316334343033643062323736363062370a636235313266393437326362643764
+#   #                 63366637613933333035373431643864626539623364663730383761383665343431326636623132
+#   #                 3339363035336135390a333366343766653563363762663838376366363435363465613332313034
+#   #                 63326236333838626537656366333131383463363632363265306532383264396535
 
-# The disk paths to use
-couchbase_paths:
-  data: /opt/couchbase/var/lib/couchbase/data
-  index: /opt/couchbase/var/lib/couchbase/data
-  analytics: /opt/couchbase/var/lib/couchbase/data
-  eventing: /opt/couchbase/var/lib/couchbase/data
+# # The disk paths to use
+# couchbase_paths:
+#   data: /opt/couchbase/var/lib/couchbase/data
+#   index: /opt/couchbase/var/lib/couchbase/data
+#   analytics: /opt/couchbase/var/lib/couchbase/data
+#   eventing: /opt/couchbase/var/lib/couchbase/data
 
-# Password Policy
-couchbase_password_policy:
-  min_length: 8
-  uppercase: true
-  lowercase: true
-  digit: true
-  special_char: true
+# # Password Policy
+# couchbase_password_policy:
+#   min_length: 8
+#   uppercase: true
+#   lowercase: true
+#   digit: true
+#   special_char: true
 
-# Query Settings
-couchbase_query_settings:
-  pipeline_batch: 16
-  pipeline_cap: 512
-  scan_cap: 512
-  timeout: 0
-  prepared_limit: 16384
-  completed_limit: 4000
-  completed_threshold: 1000
-  log_level: info
-  max_parallelism: 1
+# # Query Settings
+# couchbase_query_settings:
+#   pipeline_batch: 16
+#   pipeline_cap: 512
+#   scan_cap: 512
+#   timeout: 0
+#   prepared_limit: 16384
+#   completed_limit: 4000
+#   completed_threshold: 1000
+#   log_level: info
+#   max_parallelism: 1
 
-# Index Settings
-couchbase_index_settings:
-  max_rollback_points: 2
-  stable_snapshot_interval: 5000
-  memory_snapshot_interval: 200
-  threads: 0
-  log_level: info
+# # Index Settings
+# couchbase_index_settings:
+#   max_rollback_points: 2
+#   stable_snapshot_interval: 5000
+#   memory_snapshot_interval: 200
+#   threads: 0
+#   log_level: info
 
-# List of nodes
-couchbase_nodes: 
-  - hostname: 192.168.56.3
-    group: 1
-    services: 
-      - data
-  - hostname: 192.168.56.4
-    group: 1
-    services: 
-      - data,query,index
-  - hostname: 192.168.56.5
-    group: 1
-    services: 
-      - data,query,index
+# # List of nodes
+# couchbase_nodes: 
+#   - hostname: vm1
+#     ip: 192.168.56.3
+#     group: 1
+#     services: 
+#       - data
+#   - hostname: vm2
+#     ip: 192.168.56.4
+#     group: 1
+#     services: 
+#       - data,query,index
+#   - hostname: vm3
+#     ip: 192.168.56.5
+#     group: 1
+#     services: 
+#       - data,query,index
 
-# List of buckets to create
-couchbase_buckets: 
-  - name: test
-    type: couchbase
-    storage_backend: couchstore
-    ram_size: 100 #min in couchbase
-    replicas: 2
-    priority: low 
-  - name: test1
-    type: couchbase
-    storage_backend: couchstore
-    ram_size: 100
-    replicas: 2
-  - name: test3
-    type: couchbase
-    storage_backend: couchstore
-    ram_size: 100
-    replicas: 1
-  - name: test2
-    type: couchbase
-    storage_backend: couchstore
-    ram_size: 100
-    replicas: 1
+# # List of buckets to create
+# couchbase_buckets: 
+#   - name: test
+#     type: couchbase
+#     storage_backend: couchstore
+#     ram_size: 100 #min in couchbase
+#     replicas: 2
+#     priority: low 
 
-# List of couchbase indexes
-couchbase_indexes: 
-  - bucket: travel-sample
-    definition: "CREATE INDEX idx_airport ON `travel-sample`.`inventory`.`airport` (self)"
-    replicase: 2
-  - bucket: travel-sample
-    definition: "CREATE INDEX idx_airline ON `travel-sample`.`inventory`.`airline` (self)"
-    replicase: 2
+# # List of couchbase indexes
+# couchbase_indexes: 
+#   - bucket: travel-sample
+#     definition: "CREATE INDEX idx_airport ON `travel-sample`.`inventory`.`airport` (self)"
+#     replicase: 2
+#   - bucket: travel-sample
+#     definition: "CREATE INDEX idx_airline ON `travel-sample`.`inventory`.`airline` (self)"
+#     replicase: 2
 
-# this is hash for /etc/sysctl.d/couchbase-server.conf
-# command to get this 'sha256sum /etc/sysctl.d/couchbase-server.conf'
-previous_file_hash: 77a253902ce5acd741f96c9141996d6b27d11d4bd0bbeac104dd2e33af519b19 
+# # this is hash for /etc/sysctl.d/couchbase-server.conf
+# # command to get this 'sha256sum /etc/sysctl.d/couchbase-server.conf'
+# previous_file_hash: 77a253902ce5acd741f96c9141996d6b27d11d4bd0bbeac104dd2e33af519b19 

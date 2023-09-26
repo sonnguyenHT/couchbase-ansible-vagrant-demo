@@ -4,10 +4,10 @@
   shell:
     cmd: |
       if /opt/couchbase/bin/couchbase-cli host-list \
-        --cluster {{ inventory_hostname }} \
+        --cluster {{ hostvars[inventory_hostname].ansible_host }} \
         --username {{ couchbase_security.admin_user | default('Administrator') }} \
         --password '{{ couchbase_security.admin_password | default('password') }}' | \
-        grep -q '{{ item.hostname }}'; then
+        grep -q '{{ item.ip }}'; then
           echo "The node already exists in the cluster"
       else
         /opt/couchbase/bin/couchbase-cli server-add \
@@ -16,7 +16,7 @@
           --password '{{ couchbase_security.admin_password | default('password') }}' \
           --server-add-username {{ couchbase_security.admin_user | default('Administrator') }} \
           --server-add-password '{{ couchbase_security.admin_password | default('password') }}' \
-          --server-add {{ item.hostname }} \
+          --server-add {{ item.ip }} \
           --services '{{
             item.services is defined |
             ternary(item.services, couchbase_cluster.default_services |

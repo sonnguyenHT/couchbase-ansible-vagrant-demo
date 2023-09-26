@@ -4,14 +4,14 @@
   shell:
     cmd: |
       if /opt/couchbase/bin/couchbase-cli bucket-list \
-        --cluster {{ inventory_hostname }} \
+        --cluster {{ hostvars[inventory_hostname].ansible_host }} \
         --username {{ couchbase_security.admin_user | default('Administrator') }} \
         --password '{{ couchbase_security.admin_password | default('password') }}' | \
         grep -q '{{ item.name }}'; then
           echo "The bucket already exists"
       else
         /opt/couchbase/bin/couchbase-cli bucket-create \
-          --cluster {{ inventory_hostname }} \
+          --cluster {{ hostvars[inventory_hostname].ansible_host }} \
           --username {{ couchbase_security.admin_user | default('Administrator') }} \
           --password '{{ couchbase_security.admin_password | default('password') }}' \
           --bucket {{ item.name | default('default') }} \
@@ -27,7 +27,7 @@
           --wait
         fi
   with_items: "{{ couchbase_buckets }}"
-  when: couchbase_master is defined and couchbase_master == inventory_hostname
+  when: couchbase_master is defined and couchbase_master == hostvars[inventory_hostname].ansible_host
   register: create_bucket
   changed_when: "'The bucket already exists' not in create_bucket.stdout"
   tags:

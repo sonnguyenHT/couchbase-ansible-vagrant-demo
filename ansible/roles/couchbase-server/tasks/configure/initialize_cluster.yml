@@ -6,14 +6,14 @@
       if /opt/couchbase/bin/couchbase-cli setting-cluster \
         --username {{ couchbase_security.admin_user | default('Administrator') }} \
         --password '{{ couchbase_security.admin_password | default('password') }}' \
-        --cluster {{ inventory_hostname }} \
+        --cluster {{ hostvars[inventory_hostname].ansible_host }} \
         --cluster-name '{{ couchbase_cluster.name | default('My Cluster') }}' \
         --cluster-ramsize {{ couchbase_memory_quotas.data | default(1024) }} \
         --username {{ couchbase_security.admin_user | default('Administrator') }} \
         --password '{{ couchbase_security.admin_password | default('password') }}' | \
         grep -q 'ERROR: Cluster is not initialized'; then
         /opt/couchbase/bin/couchbase-cli cluster-init \
-          --cluster {{ inventory_hostname }} \
+          --cluster {{ hostvars[inventory_hostname].ansible_host }} \
           --cluster-username {{ couchbase_security.admin_user | default('Administrator') }} \
           --cluster-password '{{ couchbase_security.admin_password | default('password') }}' \
           --cluster-port {{ couchbase_cluster.port | default(8091) }} \
@@ -30,7 +30,7 @@
   loop: "{{ couchbase_nodes }}"
   register: initialize_cluster 
   changed_when: "'Already initialized' not in initialize_cluster.stdout"
-  when: couchbase_master is defined and couchbase_master == inventory_hostname and couchbase_master == item.hostname
+  when: couchbase_master is defined and couchbase_master == hostvars[inventory_hostname].ansible_host and couchbase_master == hostvars[inventory_hostname].ansible_host
 
 
 # --cluster-fts-ramsize 256 --cluster-index-ramsize 256 --cluster-analytics-ramsize 1024 

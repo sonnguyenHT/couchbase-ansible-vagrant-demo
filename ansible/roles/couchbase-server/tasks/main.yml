@@ -32,36 +32,6 @@
     - couchbase_user_groups
     - couchbase_indexes
 
-# Preflight
-- name: Preflight
-  ansible.builtin.include_tasks : "{{ item }}"
-  with_fileglob:
-    - preflight/*.yml
-  tags:
-    - couchbase_install
-    - couchbase_debug
-    - couchbase_configure
-    - couchbase_os
-    - couchbase_firewalld
-    - couchbase_rebalance
-    - couchbase_server_groups
-    - couchbase_buckets
-    - couchbase_sample_buckets
-    - couchbase_audit
-    - couchbase_autofailover
-    - couchbase_password_policy
-    - couchbase_query_settings
-    - couchbase_index_settings
-    - couchbase_security_settings
-    - couchbase_rebalance_settings
-    - couchbase_notifications
-    - couchbase_alerts
-    - couchbase_xdcr
-    - couchbase_ldap
-    - couchbase_users
-    - couchbase_user_groups
-    - couchbase_indexes
-
 # Install the OS specific installer in the install/ directory
 - name: Install the couchbase Server
   include_tasks: "{{ item }}"
@@ -115,8 +85,8 @@
 
 - name: Register a variable to set the master/configuration node
   set_fact:
-    couchbase_master: "{{ inventory_hostname }}" # inventory_hostname is special_var in ansible show current host being inerated over in the play
-  when: couchbase_master is not defined and couchbase_nodes[0].hostname == inventory_hostname
+    couchbase_master: "{{ hostvars[inventory_hostname].ansible_host }}" # hostvars[inventory_hostname].ansible_host is special_var in ansible show current host being inerated over in the play
+  when: couchbase_master is not defined and couchbase_nodes[0].hostname == hostvars[inventory_hostname].inventory_hostname
   tags:
     - couchbase_configure
     - couchbase_rebalance

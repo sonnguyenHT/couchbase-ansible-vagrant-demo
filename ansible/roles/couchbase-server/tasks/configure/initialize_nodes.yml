@@ -4,17 +4,17 @@
   shell:
     cmd: |
       if /opt/couchbase/bin/couchbase-cli host-list \
-        --cluster {{ inventory_hostname }} \
+        --cluster {{ hostvars[inventory_hostname].ansible_host }} \
         --username {{ couchbase_security.admin_user | default('Administrator') }} \
         --password '{{ couchbase_security.admin_password | default('password') }}' | \
-        grep -q '{{ item.hostname }}'; then
+        grep -q '{{ hostvars[inventory_hostname].ansible_host }}'; then
           echo "The node already exists in the cluster"
       else
         /opt/couchbase/bin/couchbase-cli node-init \
-          --cluster {{ item.hostname }} \
+          --cluster {{ hostvars[inventory_hostname].ansible_host }} \
           --username {{ couchbase_security.admin_user | default('Administrator') }} \
           --password '{{ couchbase_security.admin_password | default('password') }}' \
-          --node-init-hostname '{{ item.hostname }}' \
+          --node-init-hostname '{{ hostvars[inventory_hostname].ansible_host }}' \
           --node-init-data-path '{{ couchbase_paths.data }}' \
           --node-init-index-path '{{ couchbase_paths.index }}' \
           --node-init-analytics-path '{{ couchbase_paths.analytics }}' \

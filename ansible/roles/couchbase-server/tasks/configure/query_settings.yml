@@ -4,7 +4,7 @@
   shell:
     cmd: |
       /opt/couchbase/bin/couchbase-cli setting-query \
-        --cluster {{ inventory_hostname }} \
+        --cluster {{ hostvars[inventory_hostname].ansible_host }} \
         --username {{ couchbase_security.admin_user | default('Administrator') }} \
         --password '{{ couchbase_security.admin_password | default('password') }}' \
         --pipeline-batch {{ couchbase_query_settings.pipeline_batch | default(16) | int }} \
@@ -17,7 +17,7 @@
         --log-level {{ couchbase_query_settings.log_level | default('info') }} \
         --max-parallelism {{ couchbase_query_settings.max_parallelism | default(1) | int }} \
         --set
-  when: couchbase_master is defined and couchbase_master == inventory_hostname
+  when: couchbase_master is defined and couchbase_master == hostvars[inventory_hostname].ansible_host
   changed_when: false
   tags:
     - couchbase_configure
